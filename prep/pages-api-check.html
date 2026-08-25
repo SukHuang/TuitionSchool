@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Connectivity Check</title>
+    <style>
+      body { font-family: sans-serif; padding: 20px; }
+      .ok { color: #0a6b36; }
+      .err { color: #9e1028; }
+    </style>
+  </head>
+  <body>
+    <h1>Frontend to API Check</h1>
+    <p id="out">Checking...</p>
+    <script>
+      const API_BASE = "https://your-render-service.onrender.com";
+      fetch(`${API_BASE}/api/health`)
+        .then((r) => r.json())
+        .then((d) => {
+          document.getElementById("out").className = "ok";
+          document.getElementById("out").textContent = `Success: ${JSON.stringify(d)}`;
+        })
+        .catch((e) => {
+          document.getElementById("out").className = "err";
+          document.getElementById("out").textContent = `Failed: ${e.message}`;
+        });
+    </script>
+  </body>
+</html>
