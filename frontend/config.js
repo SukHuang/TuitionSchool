@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_BASE: "https://your-render-service.onrender.com"
+  API_BASE: "https://tuitionschool-q9zz.onrender.com"
 };
