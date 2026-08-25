@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sunrise Tuition Centre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+
+    <header class="site-header">
+      <h1>Sunrise Tuition Centre</h1>
+      <p>Class, Teacher, and Student Management</p>
+    </header>
+
+    <main class="layout">
+      <nav class="tabs" aria-label="Main navigation">
+        <button class="tab active" data-view="dashboard">Dashboard</button>
+        <button class="tab" data-view="classes">Classes</button>
+        <button class="tab" data-view="teachers">Teachers</button>
+        <button class="tab" data-view="students">Students</button>
+      </nav>
+
+      <section id="statusBar" class="status hidden" role="status" aria-live="polite"></section>
+
+      <section class="view active" id="view-dashboard">
+        <h2>Summary</h2>
+        <div class="cards three" id="dashboardCards"></div>
+      </section>
+
+      <section class="view" id="view-classes">
+        <div class="section-head">
+          <h2>Classes</h2>
+          <input id="classSearch" type="search" placeholder="Search by class code or name" aria-label="Search classes" />
+        </div>
+        <div id="classList" class="cards"></div>
+
+        <h3 id="classFormTitle">Create Class</h3>
+        <form id="classForm" class="form-grid">
+          <input type="hidden" id="classId" />
+          <label>Class Code<input id="classCode" required /></label>
+          <label>Class Name<input id="className" required /></label>
+          <label>Subjects<input id="classSubjects" /></label>
+          <label>Schedule Days<input id="classDays" /></label>
+          <label>Schedule Time<input id="classTime" /></label>
+          <label>Room<input id="classRoom" /></label>
+          <label>Status
+            <select id="classStatus">
+              <option>Active</option>
+              <option>Inactive</option>
+            </select>
+          </label>
+          <label>Assigned Teacher
+            <select id="classTeacherId">
+              <option value="">Unassigned</option>
+            </select>
+          </label>
+          <div class="actions">
+            <button type="submit">Save Class</button>
+            <button type="button" id="classCancel" class="ghost">Cancel</button>
+          </div>
+        </form>
+
+        <div id="classDetail" class="detail hidden"></div>
+      </section>
+
+      <section class="view" id="view-teachers">
+        <div class="section-head">
+          <h2>Teachers</h2>
+          <input id="teacherSearch" type="search" placeholder="Search by name or code" aria-label="Search teachers" />
+        </div>
+        <div id="teacherList" class="cards"></div>
+
+        <h3 id="teacherFormTitle">Create Teacher</h3>
+        <form id="teacherForm" class="form-grid">
+          <input type="hidden" id="teacherId" />
+          <label>Teacher Code<input id="teacherCode" required /></label>
+          <label>Full Name<input id="teacherName" required /></label>
+          <label>Email<input id="teacherEmail" type="email" /></label>
+          <label>Phone<input id="teacherPhone" /></label>
+          <label>Subject Specialty<input id="teacherSubject" /></label>
+          <label>Join Date<input id="teacherJoinDate" type="date" /></label>
+          <label>Status
+            <select id="teacherStatus">
+              <option>Active</option>
+              <option>On Leave</option>
+              <option>Inactive</option>
+            </select>
+          </label>
+          <label>Assigned Class
+            <select id="teacherClassId">
+              <option value="">Unassigned</option>
+            </select>
+          </label>
+          <div class="actions">
+            <button type="submit">Save Teacher</button>
+            <button type="button" id="teacherCancel" class="ghost">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="view" id="view-students">
+        <div class="section-head">
+          <h2>Students</h2>
+          <div class="filters">
+            <input id="studentSearch" type="search" placeholder="Search by name or code" aria-label="Search students" />
+            <select id="studentClassFilter">
+              <option value="">All classes</option>
+            </select>
+          </div>
+        </div>
+        <div id="studentList" class="cards"></div>
+
+        <h3 id="studentFormTitle">Create Student</h3>
+        <form id="studentForm" class="form-grid">
+          <input type="hidden" id="studentId" />
+          <label>Class
+            <select id="studentClassId" required></select>
+          </label>
+          <label>Student Code<input id="studentCode" required /></label>
+          <label>Full Name<input id="studentName" required /></label>
+          <label>Gender<input id="studentGender" /></label>
+          <label>Age<input id="studentAge" type="number" min="3" max="25" /></label>
+          <label>Guardian Name<input id="guardianName" /></label>
+          <label>Guardian Phone<input id="guardianPhone" /></label>
+          <label>Guardian Email<input id="guardianEmail" type="email" /></label>
+          <label>Enrolment Date<input id="studentEnrolDate" type="date" /></label>
+          <label>Status
+            <select id="studentStatus">
+              <option>Active</option>
+              <option>Withdrawn</option>
+            </select>
+          </label>
+          <div class="actions">
+            <button type="submit">Save Student</button>
+            <button type="button" id="studentCancel" class="ghost">Cancel</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="./config.js"></script>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
