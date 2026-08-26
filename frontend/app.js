@@ -16,7 +16,8 @@ const els = {
   classList: document.getElementById("classList"),
   teacherList: document.getElementById("teacherList"),
   studentList: document.getElementById("studentList"),
-  classDetail: document.getElementById("classDetail"),
+  classDetailModal: document.getElementById("classDetailModal"),
+  classDetailContent: document.getElementById("classDetailContent"),
   studentClassId: document.getElementById("studentClassId"),
   studentClassFilter: document.getElementById("studentClassFilter"),
   classTeacherId: document.getElementById("classTeacherId"),
@@ -287,14 +288,15 @@ async function loadClassDetail(classId) {
     const students = detail.students
       .map((s) => `<li>${s.student_code} - ${s.full_name} (${s.status})</li>`)
       .join("");
-    els.classDetail.classList.remove("hidden");
-    els.classDetail.innerHTML = `
-      <h4>Class Detail: ${detail.class_name}</h4>
-      <p>Teacher: ${detail.teacher_name || "Unassigned"}</p>
-      <p>Teacher Contact: ${detail.teacher_email || "-"} / ${detail.teacher_phone || "-"}</p>
-      <p>Students:</p>
+    els.classDetailContent.innerHTML = `
+      <h3>${detail.class_name}</h3>
+      <p><strong>Code:</strong> ${detail.class_code}</p>
+      <p><strong>Teacher:</strong> ${detail.teacher_name || "Unassigned"}</p>
+      <p><strong>Teacher Contact:</strong> ${detail.teacher_email || "-"} / ${detail.teacher_phone || "-"}</p>
+      <p><strong>Students Enrolled:</strong></p>
       <ul>${students || "<li>No students</li>"}</ul>
     `;
+    els.classDetailModal.classList.remove("hidden");
   } catch (error) {
     showStatus(error.message, true);
   }
@@ -411,7 +413,10 @@ function bindEvents() {
     const id = button.dataset.id;
     const action = button.dataset.action;
 
-    if (action === "class-detail") return loadClassDetail(id);
+    if (action === "close-class-detail") {
+      els.classDetailModal.classList.add("hidden");
+      return;
+    }
 
     if (action === "class-edit-inline") {
       state.editingClassId = Number(id);
