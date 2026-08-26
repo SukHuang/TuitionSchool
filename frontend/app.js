@@ -268,18 +268,21 @@ function resetClassForm() {
   document.getElementById("classForm").reset();
   document.getElementById("classId").value = "";
   document.getElementById("classFormTitle").textContent = "Create Class";
+  document.getElementById("classFormContainer").classList.add("hidden");
 }
 
 function resetTeacherForm() {
   document.getElementById("teacherForm").reset();
   document.getElementById("teacherId").value = "";
   document.getElementById("teacherFormTitle").textContent = "Create Teacher";
+  document.getElementById("teacherFormContainer").classList.add("hidden");
 }
 
 function resetStudentForm() {
   document.getElementById("studentForm").reset();
   document.getElementById("studentId").value = "";
   document.getElementById("studentFormTitle").textContent = "Create Student";
+  document.getElementById("studentFormContainer").classList.add("hidden");
 }
 
 async function loadClassDetail(classId) {
@@ -307,6 +310,17 @@ function bindEvents() {
   els.teacherSearch.addEventListener("input", renderTeachers);
   els.studentSearch.addEventListener("input", renderStudents);
   els.studentClassFilter.addEventListener("change", renderStudents);
+
+  // Add button handlers to show forms
+  document.getElementById("classAddBtn").addEventListener("click", () => {
+    document.getElementById("classFormContainer").classList.remove("hidden");
+  });
+  document.getElementById("teacherAddBtn").addEventListener("click", () => {
+    document.getElementById("teacherFormContainer").classList.remove("hidden");
+  });
+  document.getElementById("studentAddBtn").addEventListener("click", () => {
+    document.getElementById("studentFormContainer").classList.remove("hidden");
+  });
 
   document.getElementById("classCancel").addEventListener("click", resetClassForm);
   document.getElementById("teacherCancel").addEventListener("click", resetTeacherForm);
