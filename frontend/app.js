@@ -44,16 +44,8 @@ async function api(path, options = {}) {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
-  return data;
-}
-
-function initTabs() {
-  document.querySelectorAll(".tab").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach((el) => el.classList.remove("active"));
       document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
+  function renderClasses() {
       btn.classList.add("active");
       document.getElementById(`view-${btn.dataset.view}`).classList.add("active");
     });
@@ -195,14 +187,32 @@ function renderStudents() {
     const matchClass = !classFilter || String(s.class_id) === classFilter;
     return matchText && matchClass;
   });
-
-  els.studentList.innerHTML = rows
-    .map((s) => {
-      const isEditing = state.editingStudentId === s.student_id;
-      if (isEditing) {
-        const classOptions = state.classes
-          .map((c) => `<option value="${c.class_id}" ${c.class_id === s.class_id ? "selected" : ""}>${c.class_code} - ${c.class_name}</option>`)
-          .join("");
+  
+  function renderDashboard() {
+    els.dashboardCards.innerHTML = `
+      <article class="card"><h4>Total Classes</h4><p>${state.dashboard.classes}</p></article>
+      <article class="card"><h4>Total Teachers</h4><p>${state.dashboard.teachers}</p></article>
+      <article class="card"><h4>Total Students</h4><p>${state.dashboard.students}</p></article>
+    `;
+  
+    // Build enrollment by class
+    const enrollmentHtml = state.classes
+      .map((c) => {
+        const studentCount = state.students.filter((s) => s.class_id === c.class_id).length;
+        return `<article class="card"><h4>${c.class_code}</h4><p><strong>${c.class_name}</strong></p><p>Students: ${studentCount}</p></article>`;
+      })
+      .join("");
+    document.getElementById("enrollmentCards").innerHTML = enrollmentHtml;
+  }
+    // Build enrollment by class
+    const enrollmentHtml = state.classes
+      .map((c) => {
+        const studentCount = state.students.filter((s) => s.class_id === c.class_id).length;
+        return `<article class="card"><h4>${c.class_code}</h4><p><strong>${c.class_name}</strong></p><p>Students: ${studentCount}</p></article>`;
+      })
+      .join("");
+    document.getElementById("enrollmentCards").innerHTML = enrollmentHtml;
+  }
         return `
         <article class="card" data-student-edit="${s.student_id}">
           <h4>Editing Student</h4>
