@@ -5,6 +5,7 @@ const state = {
   teachers: [],
   students: [],
   dashboard: { classes: 0, teachers: 0, students: 0 },
+  editingTeacherId: null,
 };
 
 const els = {
@@ -115,8 +116,33 @@ function renderTeachers() {
   const rows = state.teachers.filter((t) => `${t.teacher_code} ${t.full_name}`.toLowerCase().includes(q));
 
   els.teacherList.innerHTML = rows
-    .map(
-      (t) => `
+    .map((t) => {
+      const isEditing = state.editingTeacherId === t.teacher_id;
+      if (isEditing) {
+        const classOptions = state.classes
+          .filter((c) => !c.teacher_id || c.class_id === t.class_id)
+          .map((c) => `<option value="${c.class_id}" ${c.class_id === t.class_id ? "selected" : ""}>${c.class_code} - ${c.class_name}</option>`)
+          .join("");
+        return `
+        <article class="card" data-teacher-edit="${t.teacher_id}">
+          <h4>Editing Teacher</h4>
+          <div class="form-grid" style="gap: 8px;">
+            <label>Code<input type="text" class="inline-edit-code" value="${t.teacher_code}" /></label>
+            <label>Name<input type="text" class="inline-edit-name" value="${t.full_name}" /></label>
+            <label>Email<input type="email" class="inline-edit-email" value="${t.email || ""}" /></label>
+            <label>Phone<input type="tel" class="inline-edit-phone" value="${t.phone || ""}" /></label>
+            <label>Subject<input type="text" class="inline-edit-subject" value="${t.subject_specialty || ""}" /></label>
+            <label>Join Date<input type="date" class="inline-edit-joindate" value="${t.join_date || ""}" /></label>
+            <label>Class<select class="inline-edit-class"><option value="">Unassigned</option>${classOptions}</select></label>
+            <label>Status<select class="inline-edit-status"><option value="Active" ${t.status === "Active" ? "selected" : ""}>Active</option><option value="On Leave" ${t.status === "On Leave" ? "selected" : ""}>On Leave</option><option value="Inactive" ${t.status === "Inactive" ? "selected" : ""}>Inactive</option></select></label>
+          </div>
+          <div class="row-actions">
+            <button class="ghost" data-action="teacher-save-inline" data-id="${t.teacher_id}">Save</button>
+            <button class="danger" data-action="teacher-cancel-inline" data-id="${t.teacher_id}">Cancel</button>
+          </div>
+        </article>`;
+      }
+      return `
       <article class="card">
         <h4>${t.full_name} <small>(${t.teacher_code})</small></h4>
         <p>Email: ${t.email || "-"}</p>
@@ -125,11 +151,11 @@ function renderTeachers() {
         <p>Class: ${t.class_name || "Unassigned"}</p>
         <p>Status: ${t.status}</p>
         <div class="row-actions">
-          <button class="ghost" data-action="teacher-edit" data-id="${t.teacher_id}">Edit</button>
+          <button class="ghost" data-action="teacher-edit-inline" data-id="${t.teacher_id}">Edit</button>
           <button class="danger" data-action="teacher-delete" data-id="${t.teacher_id}">Delete</button>
         </div>
-      </article>`
-    )
+      </article>`;
+    })
     .join("");
 }
 
@@ -350,28 +376,41 @@ function bindEvents() {
       return;
     }
 
-    if (action === "teacher-edit") {
+    if (action === "teacher-edit-inline") {
+      state.editingTeacherId = Number(id);
+      renderTeachers();
+      return;
+    }
+
+    if (action === "teacher-cancel-inline") {
+      state.editingTeacherId = null;
+      renderTeachers();
+      return;
+    }
+
+    if (action === "teacher-save-inline") {
       const row = state.teachers.find((t) => String(t.teacher_id) === id);
       if (!row) return;
-      document.getElementById("teacherFormTitle").textContent = "Edit Teacher";
-      document.getElementById("teacherId").value = row.teacher_id;
-      document.getElementById("teacherCode").value = row.teacher_code;
-      document.getElementById("teacherName").value = row.full_name;
-      document.getElementById("teacherEmail").value = row.email || "";
-      document.getElementById("teacherPhone").value = row.phone || "";
-      document.getElementById("teacherSubject").value = row.subject_specialty || "";
-      document.getElementById("teacherJoinDate").value = row.join_date || "";
-      document.getElementById("teacherStatus").value = row.status || "Active";
-
-      const currentOption = `<option value="${row.class_id || ""}" selected>${
-        row.class_name ? `${row.class_code} - ${row.class_name}` : "Unassigned"
-      }</option>`;
-      const extra = state.classes
-        .filter((c) => !c.teacher_id || c.class_id === row.class_id)
-        .map((c) => optionHtml(c.class_id, `${c.class_code} - ${c.class_name}`))
-        .join("");
-      els.teacherClassId.innerHTML = `<option value="">Unassigned</option>${currentOption}${extra}`;
-      document.getElementById("teacherClassId").value = row.class_id || "";
+      const card = document.querySelector(`[data-teacher-edit="${id}"]`);
+      if (!card) return;
+      const payload = {
+        teacher_code: card.querySelector(".inline-edit-code").value.trim(),
+        full_name: card.querySelector(".inline-edit-name").value.trim(),
+        email: card.querySelector(".inline-edit-email").value.trim(),
+        phone: card.querySelector(".inline-edit-phone").value.trim(),
+        subject_specialty: card.querySelector(".inline-edit-subject").value.trim(),
+        class_id: card.querySelector(".inline-edit-class").value || null,
+        join_date: card.querySelector(".inline-edit-joindate").value,
+        status: card.querySelector(".inline-edit-status").value,
+      };
+      try {
+        showStatus("Saving teacher...");
+        await api(`/api/teachers/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+        state.editingTeacherId = null;
+        await loadAll();
+      } catch (error) {
+        showStatus(error.message, true);
+      }
       return;
     }
 
