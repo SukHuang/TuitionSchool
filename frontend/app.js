@@ -312,6 +312,13 @@ function bindEvents() {
   document.getElementById("teacherCancel").addEventListener("click", resetTeacherForm);
   document.getElementById("studentCancel").addEventListener("click", resetStudentForm);
 
+  // Close modal when clicking overlay
+  els.classDetailModal.addEventListener("click", (e) => {
+    if (e.target === els.classDetailModal) {
+      els.classDetailModal.classList.add("hidden");
+    }
+  });
+
   document.getElementById("studentClassId").addEventListener("change", async (e) => {
     const studentId = document.getElementById("studentId").value;
     if (studentId) return;
@@ -416,6 +423,10 @@ function bindEvents() {
     if (action === "close-class-detail") {
       els.classDetailModal.classList.add("hidden");
       return;
+    }
+
+    if (action === "class-detail") {
+      return loadClassDetail(id);
     }
 
     if (action === "class-edit-inline") {
