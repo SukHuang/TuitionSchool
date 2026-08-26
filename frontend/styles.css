@@ -143,8 +143,8 @@ input, select {
 
 .cards {
   display: grid;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .cards.three {
@@ -155,26 +155,28 @@ input, select {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-2);
-  padding: 12px;
+  padding: 8px;
 }
 
-.card h4 { margin: 0 0 8px; }
-.card p { margin: 5px 0; color: var(--muted); }
+.card h4 { margin: 0 0 4px; font-size: 0.95rem; }
+.card p { margin: 2px 0; color: var(--muted); font-size: 0.85rem; }
 
 .row-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
 }
 
 button {
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--accent-2);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
-  padding: 10px 12px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
 }
 
 button:hover { filter: brightness(0.95); }
