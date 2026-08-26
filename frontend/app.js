@@ -90,12 +90,33 @@ function renderDashboard() {
   `;
 
   if (!els.enrollmentCards) return;
-  els.enrollmentCards.innerHTML = state.classes
-    .map((c) => {
-      const count = state.students.filter((s) => Number(s.class_id) === Number(c.class_id)).length;
-      return `<article class="card"><h4>${c.class_code}</h4><p>${c.class_name}</p><p>Students: ${count}</p></article>`;
-    })
-    .join("");
+  const chartRows = state.classes.map((c) => {
+    const count = state.students.filter((s) => Number(s.class_id) === Number(c.class_id)).length;
+    return {
+      code: c.class_code,
+      name: c.class_name,
+      count,
+    };
+  });
+
+  const maxCount = Math.max(...chartRows.map((row) => row.count), 1);
+  els.enrollmentCards.innerHTML = `
+    <div class="enrollment-chart" role="img" aria-label="Bar chart of student count by class">
+      ${chartRows
+        .map((row) => {
+          const width = Math.max((row.count / maxCount) * 100, row.count > 0 ? 8 : 0);
+          return `
+          <div class="enrollment-row">
+            <div class="enrollment-label" title="${row.name}">${row.code} - ${row.name}</div>
+            <div class="enrollment-bar-track">
+              <div class="enrollment-bar" style="width: ${width}%"></div>
+            </div>
+            <div class="enrollment-count">${row.count}</div>
+          </div>`;
+        })
+        .join("")}
+    </div>
+  `;
 }
 
 function renderClasses() {
